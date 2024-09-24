@@ -1,5 +1,5 @@
 //
-//  Alert.swift
+//  SaveTask.swift
 //  ToDo List
 //
 //  Created by Никита Козловский on 24.09.2024.
@@ -8,28 +8,7 @@
 import UIKit
 import CoreData
 
-extension UITableViewController {
-    func createAlert() {
-        let alertController = UIAlertController(title: "Новая задача", message: "Введите задачу", preferredStyle: .alert)
-        
-        let saveTask = UIAlertAction(title: "Сохранить", style: .default) { action in
-            let alertTF = alertController.textFields?.first
-            if let newTask = alertTF?.text {
-                self.saveTask(withTitle: newTask)
-                self.tableView.reloadData()
-            }
-        }
-        
-        alertController.addTextField()
-        
-        let cancelAction = UIAlertAction(title: "Отмена", style: .default, handler: nil)
-        
-        alertController.addAction(saveTask)
-        alertController.addAction(cancelAction)
-        
-        present(alertController, animated: true)
-    }
-    
+struct SaveTask {
     // - С помощью этой фнукции мы записываем данные в Core Data
     func saveTask(withTitle title: String) {
         

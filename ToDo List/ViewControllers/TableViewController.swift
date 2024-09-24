@@ -14,16 +14,7 @@ class TableViewController: UITableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        let context = appDelegate.persistentContainer.viewContext
-        
-        let fetchRequest: NSFetchRequest<Tasks> = Tasks.fetchRequest()
-        
-        do {
-            TasksArray.tasksArray = try context.fetch(fetchRequest)
-        } catch let error as NSError {
-            print(error.localizedDescription)
-        }
+        fetchCoreData()
     }
 
     override func viewDidLoad() {
@@ -40,34 +31,30 @@ class TableViewController: UITableViewController {
     private func createNavBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewTask))
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(deleteTask))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(cancelButtonTapped))
     }
     
     @objc private func addNewTask() {
-        createAlert()
+        addTaskAlert()
     }
     
     // - Работает аналогично функции saveTask
-    @objc private func deleteTask() {
+    @objc private func cancelButtonTapped() {
+        deleteTaskAlert()
+        tableView.reloadData()
+    }
+    
+    private func fetchCoreData() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let context = appDelegate.persistentContainer.viewContext
         
         let fetchRequest: NSFetchRequest<Tasks> = Tasks.fetchRequest()
         
-        if let tasks = try? context.fetch(fetchRequest) {
-            for task in tasks {
-                context.delete(task)
-            }
-        }
-        
         do {
-            try context.save()
-            
+            TasksArray.tasksArray = try context.fetch(fetchRequest)
         } catch let error as NSError {
             print(error.localizedDescription)
         }
-        
-        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
